@@ -8,7 +8,7 @@
                 <h5 class="card-title h5-title">{{ track.title }}</h5>
                 <p class="card-text p-artist">{{ track.artist }}</p>
                 <p class="card-text p-uploaded-at"><small class="text-muted">Uploaded on {{ track.created_at.strftime('%b %m, %Y') }}</small></p>
-                <p onclick="fetchURL(event)" class="track-id">{{ track.id }}</p>
+                <p onclick="fetchURL(event)" id="{{track.id}}" class="track-id large">Click to play</p>
                 <!-- <audio controls>
                     <source id="audio-player" src="" type="audio/mpeg">
                     Your browser does not support the audio element.
@@ -24,29 +24,28 @@
     <script>
 
         // This is my front-end attempt at getting the audio to work. 
+        // Builds an audio element after the user clicks "Click to play"
+        // Janky but temporary fix until backend method works.
 
         function fetchURL(event) {
-
-            t_id = event.currentTarget;
-            track_id = t_id.innerHTML;
-            alert(track_id);
+            tid = event.currentTarget;
+            track_id = tid.id;
 
             fetch(`${window.origin}/play_track/${track_id}`)
                 .then((response) => {
-                    console.log(response.status);
+
                     return response.json();
                 })
                 .then(function(data) {
-                    console.log(data.message.url);
-                    createAudioPlayer(data);
-    
+
+                    createAudioPlayer(data, event);
                 });
         }
 
 
-        function createAudioPlayer(data) {
+        function createAudioPlayer(data, event) {
 
-            let cardBody = document.getElementsByName('myCard')[0];
+            let cardBody = event.target.parentElement;
 
             let audio = document.createElement('audio');
             audio.controls = true;
@@ -55,10 +54,12 @@
             source.type = "audio/mpeg";
             source.src = data.message.url
 
+            event.target.style.display = 'none';
             cardBody.append(audio);
             audio.prepend(source);
-
+            
         };
+
 
     </script>
 </div>

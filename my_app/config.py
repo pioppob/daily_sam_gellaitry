@@ -9,7 +9,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    TRACKLIST_DIR = os.listdir(BASEDIR + 'static/tracks')
+    TRACKLIST_DIR = os.listdir(BASEDIR + '/static/tracks')
     MAX_WORKERS = 70
 
     JSON_TRACK_DATA = os.path.join(BASEDIR, 'sc.json')
