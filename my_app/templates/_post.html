@@ -1,0 +1,67 @@
+<div class="card mb-3">
+    <div class="row no-gutters">
+        <div class="col-xl-4 col-lg-5 col-md-5 col-sm-5">
+            <img width="500px" height="500px" class="img-thumbnail thumb" src="{{ track.thumbnail }}" class="card-img" alt="{{ track.title }}">
+        </div>
+        <div class="col-xl-8 col-lg-7 col-md-6 col-sm-7">
+            <div name="myCard" class="card-body myCard">
+                <h5 class="card-title h5-title">{{ track.title }}</h5>
+                <p class="card-text p-artist">{{ track.artist }}</p>
+                <p class="card-text p-uploaded-at"><small class="text-muted">Uploaded on {{ track.created_at.strftime('%b %m, %Y') }}</small></p>
+                <p onclick="fetchURL(event)" class="track-id">{{ track.id }}</p>
+                <!-- <audio controls>
+                    <source id="audio-player" src="" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio> -->
+
+            </div>
+            
+        </div>
+    </div>
+
+
+
+    <script>
+
+        // This is my front-end attempt at getting the audio to work. 
+
+        function fetchURL(event) {
+
+            t_id = event.currentTarget;
+            track_id = t_id.innerHTML;
+            alert(track_id);
+
+            fetch(`${window.origin}/play_track/${track_id}`)
+                .then((response) => {
+                    console.log(response.status);
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log(data.message.url);
+                    createAudioPlayer(data);
+    
+                });
+        }
+
+
+        function createAudioPlayer(data) {
+
+            let cardBody = document.getElementsByName('myCard')[0];
+
+            let audio = document.createElement('audio');
+            audio.controls = true;
+
+            let source = document.createElement('source');
+            source.type = "audio/mpeg";
+            source.src = data.message.url
+
+            cardBody.append(audio);
+            audio.prepend(source);
+
+        };
+
+    </script>
+</div>
+
+
+

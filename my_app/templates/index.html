@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% for track in tracks %}
+        {% include '_post.html' %}
+    {% endfor %}
+
+{% endblock content %}

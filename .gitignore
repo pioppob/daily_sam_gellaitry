@@ -1,0 +1,6 @@
+venv/
+youtube-dl.txt
+app.db
+.flaskenv
+__pycache__/
+.DS_Store
