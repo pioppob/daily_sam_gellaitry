@@ -122,6 +122,18 @@
 
         };
 
+        function footerToggleControls(event) {
+            let pauseID = event.target.getAttribute('alt');
+            let source = document.getElementById(pauseID);
+            let audio = source.parentElement;
+            
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
     </script>
 </div>
 
@@ -129,5 +141,5 @@
 
 <div id="footer" style="display: none;" class="navbar fixed-bottom navbar-light bg-light footer">
     <p style="display: inline;" class="card-text p-artist"></p>
-    <p id="pause" onclick="toggleMusic(event);" style="display: inline; float: right;" class="card-text p-artist">&#9612; &#9612;</p>
+    <p id="pause" onclick="footerToggleControls(event);" style="display: inline; float: right;" class="card-text p-artist">&#9612; &#9612;</p>
 </div>
