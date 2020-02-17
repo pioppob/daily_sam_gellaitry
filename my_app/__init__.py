@@ -8,12 +8,14 @@ db = SQLAlchemy()
 bootstrap = Bootstrap()
 migrate = Migrate()
 
+
 def create_app():
 
     app = Flask(__name__)
     app.config.from_object(Config)
 
     from . import main
+
     app.register_blueprint(main.bp)
 
     db.init_app(app)
@@ -25,8 +27,8 @@ def create_app():
     @app.shell_context_processor
     def shell_context():
         return {
-            'db': db,
-            'Track': Track,
+            "db": db,
+            "Track": Track,
         }
 
     return app

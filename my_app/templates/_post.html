@@ -1,18 +1,21 @@
 <div class="card mb-3">
     <div class="row no-gutters">
-        <div class="col-xl-4 col-lg-5 col-md-5 col-sm-5">
+        <div class="col-xl-4 col-lg-5 col-md-4 col-sm-5">
             <img width="500px" height="500px" class="img-thumbnail thumb" src="{{ track.thumbnail }}" class="card-img" alt="{{ track.title }}">
         </div>
         <div class="col-xl-8 col-lg-7 col-md-6 col-sm-7">
             <div name="myCard" class="card-body myCard">
+                {% if track.title|length > 20 %}
+                <h5 class="card-title h5-title" title="{{track.title}}">{{ track.title|truncate(20, True) }}</h5>
+                {% else %}
                 <h5 class="card-title h5-title">{{ track.title }}</h5>
+                {% endif %}
                 <p class="card-text p-artist">{{ track.artist }}</p>
-                <p class="card-text p-uploaded-at"><small class="text-muted">Uploaded on {{ track.created_at.strftime('%b %m, %Y') }}</small></p>
-                <p onclick="fetchURL(event)" id="{{track.id}}" class="track-id large">Click to play</p>
-                <!-- <audio controls>
-                    <source id="audio-player" src="" type="audio/mpeg">
+                <!-- <p class="card-text p-uploaded-at"><small class="text-muted">Uploaded on {{ track.created_at.strftime('%b %m, %Y') }}</small></p> -->
+                <audio onplay="togglePlayButton(event);" onpause="togglePauseButton(event);" class="player" controls>
+                    <source id={{track.id}} name="{{track.title}}" class="audio-player" src="{{ url_for('main.play_track', track_id=track.id) }}" type="audio/mpeg">
                     Your browser does not support the audio element.
-                </audio> -->
+                </audio>
 
             </div>
             
@@ -21,48 +24,110 @@
 
 
 
+
     <script>
 
-        // This is my front-end attempt at getting the audio to work. 
-        // Builds an audio element after the user clicks "Click to play"
-        // Janky but temporary fix until backend method works.
+        function replaceSource() {
 
-        function fetchURL(event) {
-            tid = event.currentTarget;
-            track_id = tid.id;
+            // A 3 day battle was waged on the backend trying to get the audio
+            // player to refresh with the new src returned from the 
+            // play_track/<track_id>/ response. This function took care of that.
+            // Thank you Fetch API.
 
-            fetch(`${window.origin}/play_track/${track_id}`)
+            let audio = document.getElementsByClassName('audio-player');
+            let target = audio.item((audio.length)-1);
+        
+            fetch (`${target.src}`)
                 .then((response) => {
-
                     return response.json();
                 })
-                .then(function(data) {
-
-                    createAudioPlayer(data, event);
-                });
-        }
-
-
-        function createAudioPlayer(data, event) {
-
-            let cardBody = event.target.parentElement;
-
-            let audio = document.createElement('audio');
-            audio.controls = true;
-
-            let source = document.createElement('source');
-            source.type = "audio/mpeg";
-            source.src = data.message.url
-
-            event.target.style.display = 'none';
-            cardBody.append(audio);
-            audio.prepend(source);
-            
+                .then((data) => {
+                    target.src = data.message.url;
+                    target.parentElement.load();
+                })
         };
 
+        document.addEventListener('load', replaceSource(event));
+
+
+
+        function getCurrentTrack() {
+            return nowPlaying[(nowPlaying.length)-1];
+        }
+
+        function appendCurrentTrack(event) {
+            nowPlaying.push(event.target.childNodes[1]);
+        }
+
+        function removeCurrentTrack() {
+            if (nowPlaying.length !== 0) {
+                currentTrack = nowPlaying[0];
+                nowPlaying.pop(currentTrack);   
+            }  
+        }
+
+        function togglePauseButton(event) {
+            
+            let targetID = event.target.childNodes[1].getAttribute('id');
+            let pauseButton = document.getElementById('pause');
+            let pauseID = pauseButton.getAttribute('alt');
+            if (targetID == pauseID) {
+                removeCurrentTrack();
+                let pauseButton = document.getElementById('pause');
+                pauseButton.innerHTML = '&#9658';  
+            }
+        }
+
+        function togglePlayButton(event) {
+            // Pause all other songs
+            if (nowPlaying.length !== 0) {
+                currentTrack = nowPlaying[0];
+                currentTrack.parentElement.pause();
+                nowPlaying.pop(currentTrack); 
+            }
+
+            // Add track to now playing array
+            appendCurrentTrack(event);
+            
+            // Actually play the music
+            
+            event.target.play();
+
+            // Overwrite footer with track info
+            
+            displayFooter(event);
+
+            // Ensure footer pause button is in sync w/ audio player
+            // let pauseButton = document.getElementById('pause');
+            let pauseButton = document.getElementById('pause');
+            pauseButton.innerHTML = '&#9612; &#9612;';
+
+        }
+
+        function displayFooter(event) {
+
+            // Get song info from clicked track
+            let currentTrack = getCurrentTrack();
+            currentTrackName = currentTrack.getAttribute('name');
+            currentTrackID = currentTrack.getAttribute('id');
+
+            // Actually display the footer and relevant info
+            let footer = document.getElementById('footer');
+            if (footer.style.display == 'none') {
+                footer.style.display = 'block';
+            }
+            
+            footer.childNodes[1].innerHTML = `Now playing: ${currentTrackName}`;
+            footer.childNodes[3].setAttribute('alt', currentTrackID);
+
+        };
 
     </script>
 </div>
 
 
 
+<div id="footer" style="display: none;" class="navbar fixed-bottom navbar-light bg-light footer">
+    <p style="display: inline;" class="card-text p-artist"></p>
+    <p id="pause" onclick="toggleMusic(event);" style="display: inline; float: right;" class="card-text p-artist">&#9612; &#9612;</p>
+</div>
