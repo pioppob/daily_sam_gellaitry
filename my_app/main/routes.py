@@ -6,7 +6,6 @@ from flask import (
     url_for,
     jsonify,
     make_response,
-    send_file
 )
 from .models import Track
 from .forms import AddTrackForm
@@ -17,7 +16,6 @@ from my_app.config import Config
 from concurrent import futures
 from .services import (
     add_one_file,
-    set_default_thumbnail
 )
 import json
 import requests
@@ -43,44 +41,6 @@ def shuffle():
         title="Shuffle Tracks",
         tracks=tracks
     )
-
-
-@bp.route("/json")
-def add_json_tracks():
-    """
-    Populates the database with the data supplied by the given .json file.
-
-    Unfortunately soundcloud has stopped processing API application requests
-    so everything from here on is reverse engineered using a web-scraper
-    and tracing network IO in chrome devtools.
-    """
-
-    with open(Config.JSON_TRACK_DATA) as json_file:
-        json_content = json.load(json_file)
-
-    for row in json_content:
-
-        thumbnail = row["thumbnail"]
-        if not thumbnail:
-            thumbnail = set_default_thumbnail()
-        else:
-            thumbnail += f"?client_id={Config.CLIENT_ID}"
-
-        request_url = row["audio_request_url"] + \
-            f"?client_id={Config.CLIENT_ID}"
-
-        track = Track(
-            title=row["title"],
-            description=row["desc"],
-            thumbnail=thumbnail,
-            audio=request_url,
-        )
-
-        # print(track)
-        db.session.add(track)
-
-    db.session.commit()
-    return f"Added {len(json_content)} tracks to the database."
 
 
 @bp.route("/play_track/<track_id>/")
@@ -113,13 +73,7 @@ def play_track(track_id):
     json_res = json.loads(res.text)
     mpeg_audio_url = json_res["url"]
 
-    
-
     msg_dict = {"url": mpeg_audio_url}
-
-    # My issue is here: If I hardcode the mpeg_audio_url into the
-    # <audio src> HTML property, it works! However, returning the
-    # mpeg_audio_url as we do below does not work. My head hurts.
 
     res = make_response(jsonify({"message": msg_dict}))
     return res
