@@ -13,7 +13,7 @@
                 <p class="card-text p-artist">{{ track.artist }}</p>
                 <!-- <p class="card-text p-uploaded-at"><small class="text-muted">Uploaded on {{ track.created_at.strftime('%b %m, %Y') }}</small></p> -->
                 <audio onplay="togglePlayButton(event);" onpause="togglePauseButton(event);" class="player" controls>
-                    <source id={{track.id}} name="{{track.title}}" class="audio-player" src="{{ url_for('main.play_track', track_id=track.id) }}" type="audio/mpeg">
+                    <source artist="{{track.artist}}" thumbnail="{{track.thumbnail}}" id={{track.id}} name="{{track.title}}" class="audio-player" src="{{ url_for('main.play_track', track_id=track.id) }}" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
 
@@ -113,14 +113,24 @@
             let currentTrack = getCurrentTrack();
             currentTrackName = currentTrack.getAttribute('name');
             currentTrackID = currentTrack.getAttribute('id');
+            currentTrackIMG = currentTrack.getAttribute('thumbnail');
+            currentTrackArtist = currentTrack.getAttribute('artist');
 
             // Actually display the footer and relevant info
             let footer = document.getElementById('footer');
             if (footer.style.display == 'none') {
                 footer.style.display = 'block';
+                footer.style.borderBottom = 'none';
             }
+
+            let currentThumbnail = document.getElementById('current-thumbnail');
+            currentThumbnail.src = currentTrackIMG;
+
+            let currentArtist = document.getElementById('current-artist');
+            currentThumbnail.innerHTML = currentTrackIMG;
             
-            footer.childNodes[1].innerHTML = `Now playing: ${currentTrackName}`;
+            let currentTitle = document.getElementById('current-title');
+            currentTitle.innerHTML = currentTrackName;
 
             let playControls = document.getElementById('play-controls')
             playControls.childNodes[3].setAttribute('alt', currentTrackID);
@@ -154,18 +164,4 @@
         }
 
     </script>
-</div>
-
-
-
-<div id="footer" style="display: none; background-color: gainsboro;" class="navbar fixed-bottom navbar-light bg-light footer">
-    <p style="display: inline;" class="card-text p-artist"></p>
-
-    <div id="play-controls" style="display: inline; float: right;" class="card-text p-artist">
-        <p id="previous" onclick="togglePrevButton();" class="fa fa-backward"></p>
-        <p id="pause" onclick="togglePauseControls(event);" class="fa fa-pause"></p>
-        <p id="next" onclick="toggleNextButton();" class="fa fa-forward"></p>
-    </div>
-    
-
 </div>

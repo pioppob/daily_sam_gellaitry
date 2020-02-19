@@ -5,6 +5,13 @@ nav {
 
 body {
     background-color: rgb(252, 245, 245);
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .thumb {
@@ -14,6 +21,20 @@ body {
 audio { 
   max-width: 100%;
   margin-top: 3.5%;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+audio:focus {
+  outline: none;
+}
+
+source:focus {
+  outline: none;
 }
 
 h5 {
@@ -79,4 +100,35 @@ h5 {
     padding: 0;
   }
 }
+
+#current-title {
+  font-size: small;
+  margin: 0;
+  padding: 0;
+}
+
+#current-artist {
+  font-size: x-small;
+  margin: 0;
+  padding: 0;
+}
+
+#footer {
+  display: none; 
+  background-color: #ffffff; 
+  border-top-left-radius: 20px; 
+  border-top-right-radius: 20px;
+  border: 0.5px solid rgb(220, 220, 220);
+  color: rgb(61, 58, 58);
+}
+
+
+
+ /* Night mode 
+
+h5, p {color: #717171; }
+
+div {background-color: #272727;}
+
+body  {background-color: #171717;} */
 

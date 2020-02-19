@@ -14,7 +14,7 @@
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}"><span class="span-title">Daily Sam Gellaitry</span></a>
+            <a class="navbar-brand bg-none" href="{{ url_for('main.index') }}"><span class="span-title">Daily Sam Gellaitry</span></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
@@ -34,9 +34,9 @@
         </nav>
         <br><br>
 
-        <div class="container">
+        <div id="content-container" class="container">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 bg-black">
                     {% if not title %}
                         <h5>All tracks</h5>
                     {% else %}
@@ -45,12 +45,12 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-9 col-lg-8 col-md-12 col-sm-12">
+                <div class="col-xl-9 col-lg-8 col-md-12 col-sm-12 bg-black">
                     {% block content %}
                     {% endblock content %}
                 </div>
                 
-                <div id="sidebar" class="col-xl-3 col-lg-4 col-md-0 col-sm-0">
+                <div id="sidebar" class="col-xl-3 col-lg-4 col-md-0 col-sm-0 bg-black">
                     
                     <div id="sidebar-list" class="list-group">
                         <a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action">
@@ -58,7 +58,7 @@
                         </a>
                         <a href="{{ url_for('main.track_of_the_day') }}" class="list-group-item list-group-item-action">Track of the day</a>
                         <a href="{{ url_for('main.shuffle') }}" class="list-group-item list-group-item-action">Shuffle</a>
-                        <a href="#" class="list-group-item list-group-item-action">Request a track addition</a>
+                        <div id="night-mode" onclick="toggleNightMode(event)" class="list-group-item list-group-item-action">Night Mode</div>
 
                         <div onclick="toggleDisplay(event, 'toggle-projects')" class="list-group-item list-group-item-action">
                             My other projects
@@ -88,6 +88,23 @@
                 </div>
             </div>
         </div>
+        <div id="footer" style="display: none;" class="footer container navbar fixed-bottom">
+
+            <div class="row no-gutters">
+                <div class="col-xl-1 col-md-1 col-sm-2 col-2">
+                    <img id="current-thumbnail" src="" class="img-thumbnail" width="50px" height="50px">
+                </div>
+                <div class="col-xl-7 col-md-7 col-sm-7 col-7" style="padding: auto; margin-top: auto; margin-bottom: auto;">
+                    <p id="current-title" style="margin: auto;" class="card-text"></p>
+                    <p id="current-artist" style="margin: auto;" class="card-text">Sam Gellaitry</p>
+                </div>
+                <div id="play-controls" style="padding: auto; margin-top: auto; margin-bottom: auto;" class="col-xl-4 col-md-4 col-sm-3 col-3 text-right">
+                    <p id="previous" onclick="togglePrevButton();" style="margin: auto;" class="fa fa-backward">&#160;</p>
+                    <p id="pause" onclick="togglePauseControls(event);" style="margin: auto;" class="fa fa-pause">&#160;</p>
+                    <p id="next" onclick="toggleNextButton();" style="margin: auto;" class="fa fa-forward"></p>
+                </div>
+            </div>
+        </div>
         
     </body>
 
@@ -105,6 +122,59 @@
             }
 
         };
+
+        function toggleNightMode(event) {
+
+            let nightMode = document.getElementById('night-mode');
+            if (nightMode.innerHTML == 'Night Mode') {
+
+                let body = document.getElementsByTagName('body')[0];
+                body.style.backgroundColor = '#171717';
+
+                let divs = document.getElementsByTagName('div'); 
+                for (div of divs) {
+                    div.style.backgroundColor = '#272727';
+                }
+
+                let bgBlacks = document.getElementsByClassName('bg-black');
+                for (bgBlack of bgBlacks) {
+                    bgBlack.style.backgroundColor = '#171717';
+                    bgBlack.style.color = '#171717';
+                }
+                
+
+                let ps = document.getElementsByTagName('p');
+                for (p of ps) {
+                    p.style.color = '#717171';
+                }
+
+                let hFives = document.getElementsByTagName('h5');
+                for (hFive of hFives) {
+                    hFive.style.color = '#717171';
+                }
+
+                let as = document.getElementsByTagName('a');
+                for (a of as) {
+                    a.style.backgroundColor = '#272727';
+                }
+
+                let bgNones = document.getElementsByClassName('bg-none');
+                for (bgNone of bgNones) {
+                    bgNone.style.color = '';
+                    bgNone.style.backgroundColor = '';
+                }
+
+                let footer = document.getElementById('footer');
+                footer.style.border = '0.5px solid #717171';
+
+            } else {
+                location.reload();
+            }
+
+
+            
+
+        }
 
         let nowPlaying = []
 
