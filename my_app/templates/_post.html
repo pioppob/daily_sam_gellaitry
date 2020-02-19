@@ -74,7 +74,8 @@
             if (targetID == pauseID) {
                 removeCurrentTrack();
                 let pauseButton = document.getElementById('pause');
-                pauseButton.innerHTML = '&#9658';  
+                pauseButton.removeAttribute('class');
+                pauseButton.setAttribute('class', 'fa fa-play')
             }
         }
 
@@ -100,7 +101,9 @@
             // Ensure footer pause button is in sync w/ audio player
             // let pauseButton = document.getElementById('pause');
             let pauseButton = document.getElementById('pause');
-            pauseButton.innerHTML = '&#9612; &#9612;';
+            pauseButton.removeAttribute('class');
+            pauseButton.setAttribute('class', 'fa fa-pause')
+            
 
         }
 
@@ -118,11 +121,13 @@
             }
             
             footer.childNodes[1].innerHTML = `Now playing: ${currentTrackName}`;
-            footer.childNodes[3].setAttribute('alt', currentTrackID);
+
+            let playControls = document.getElementById('play-controls')
+            playControls.childNodes[3].setAttribute('alt', currentTrackID);
 
         };
 
-        function footerToggleControls(event) {
+        function togglePauseControls(event) {
             let pauseID = event.target.getAttribute('alt');
             let source = document.getElementById(pauseID);
             let audio = source.parentElement;
@@ -134,12 +139,33 @@
             }
         }
 
+        function togglePrevButton() {
+            let pauseID = document.getElementById('pause').getAttribute('alt');
+            let prevID = (parseInt(pauseID) - 1);
+            let prevTrack = document.getElementById(`${prevID}`);
+            prevTrack.parentElement.play();
+        }
+
+        function toggleNextButton() {
+            let pauseID = document.getElementById('pause').getAttribute('alt');
+            let nextID = (parseInt(pauseID) + 1);
+            let nextTrack = document.getElementById(`${nextID}`);
+            nextTrack.parentElement.play();
+        }
+
     </script>
 </div>
 
 
 
-<div id="footer" style="display: none;" class="navbar fixed-bottom navbar-light bg-light footer">
+<div id="footer" style="display: none; background-color: gainsboro;" class="navbar fixed-bottom navbar-light bg-light footer">
     <p style="display: inline;" class="card-text p-artist"></p>
-    <p id="pause" onclick="footerToggleControls(event);" style="display: inline; float: right;" class="card-text p-artist">&#9612; &#9612;</p>
+
+    <div id="play-controls" style="display: inline; float: right;" class="card-text p-artist">
+        <p id="previous" onclick="togglePrevButton();" class="fa fa-backward"></p>
+        <p id="pause" onclick="togglePauseControls(event);" class="fa fa-pause"></p>
+        <p id="next" onclick="toggleNextButton();" class="fa fa-forward"></p>
+    </div>
+    
+
 </div>
